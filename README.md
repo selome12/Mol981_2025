@@ -1,1 +1,9 @@
-# Mol981_2025
+# Computational-Biotechnology
+
+Material to the Lecture/Practical
+
+## Lecture 1: Reproducible Research / git / github
+
+[https://crsl4.github.io/mindful-programming/](https://crsl4.github.io/mindful-programming/)
+
+## Lecture 2: Intro to R
