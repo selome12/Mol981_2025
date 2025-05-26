@@ -40,6 +40,7 @@ If the packages is from the [bioconductor](https://bioconductor.org/) repository
 install.packages(BiocManager)
 library(BiocManager)
 BiocManager::install("msa")
+BiocManager::install("ggmsa")
 ```
 
 Now we should be able to load all the packages:
