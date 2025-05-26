@@ -37,7 +37,7 @@ install.packages("phangorn")
 If the packages is from the [bioconductor](https://bioconductor.org/) repository
 
 ```{r install_bioc, eval=FALSE}
-install.packages(BiocManager)
+install.packages("BiocManager")
 library(BiocManager)
 BiocManager::install("msa")
 BiocManager::install("ggmsa")
