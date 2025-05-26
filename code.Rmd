@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 ```{r setup, echo=FALSE}
 # set global chunk options: images will be bigger
 knitr::opts_chunk$set(fig.width=6, fig.height=4)
