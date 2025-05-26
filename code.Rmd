@@ -1,0 +1,98 @@
+```{r setup, echo=FALSE}
+# set global chunk options: images will be bigger
+knitr::opts_chunk$set(fig.width=6, fig.height=4)
+#, global.par=TRUE
+options(digits = 4)
+suppressPackageStartupMessages(library(phangorn))
+suppressPackageStartupMessages(library(ape))
+suppressPackageStartupMessages(library(msa))
+suppressPackageStartupMessages(library(ggmsa))
+suppressPackageStartupMessages(library(phytools))
+```   
+
+
+## Useful code
+
+### Getting started
+
+First we need to load all the necessary packages:
+```{r load_packages}
+library(ape)
+library(phangorn)
+library(msa)
+library(ggmsa)
+```
+If we get an error loading a package, this is usually an indication the package is  not installed.  
+In that case we need to install the package. This has be done on a computer only once. This code now depends in which repository the package is stored. Most packages are on [CRAN](https://cran.r-project.org/):  
+```{r install_cran, eval=FALSE}
+install.packages("ape")
+install.packages("phangorn")
+```
+
+If the packages is from the [bioconductor](https://bioconductor.org/) repository
+
+```{r install_bioc, eval=FALSE}
+install.packages(BiocManager)
+library(BiocManager)
+BiocManager::install("msa")
+```
+
+Now we should be able to load all the packages:
+```{r load_packages_2}
+library(ape)
+library(phangorn)
+library(msa)
+library(ggmsa)
+```
+
+
+### Tip
+
+Often you will need to read or write the path to a file. 
+Typing `tmp <- file.choose()` will store the path in the variable tmp and you can use it to read in the file. 
+
+## Reading in sequences
+
+Let's start with reading in the sequences from the BLAST searches. 
+
+```{r read_FASTA}
+reference <-  read.FASTA("data_raw/Q05115.fasta", type="AA")
+deltablast <- read.FASTA("data_raw/3dtv_deltablast.txt", type="AA")
+blastp <- read.FASTA("data_raw/3dtv_pBLAST.txt", type="AA")
+psyblast <- read.FASTA("data_raw/psiblast.txt", type="AA")
+```
+After this we combine the sequences and have a short look at them 
+```{r combine_sequences}
+aa <- c(reference, blastp, psyblast, deltablast)
+aa
+tmp <- names(aa)
+head(tmp)
+```
+Now the names are very long. Let's try to clean them up: 
+```{r clean_up}
+accession <- sapply(strsplit(tmp, " ") , \(x)x[[1]])
+accession[1] <- "Q05115"
+accession <- gsub("\\:.*" , "", accession)
+
+
+species  <- sapply(strsplit(tmp[-1], "\\[") , \(x) x[[2]])
+species <- gsub("\\]", "", species)
+species <- c("Bordetella bronchiseptica", species)
+
+
+gene  <- sapply(strsplit(tmp, " ") , \(x) x[-1])
+gene <- sapply(gene, paste0, collapse=" ")
+gene <- gsub("\\[.*" , "", gene) |> trimws()
+gene[1] <- "Arylmalonate decarboxylase"
+```
+Finally we write out our sequences with accession number as ID and create a table with the accession number, the gene name and the species name. And we save this data so that we can use later on or with other softerware: 
+```{r export_fasta_csv}
+X <- cbind(accession, gene, species)
+head(X)
+write.table(X, file = "data/info.csv", row.names = FALSE)
+
+names(aa) <- accession
+write.FASTA(aa, "data_raw/all_sequences.fas")
+```
+
+
