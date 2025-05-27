@@ -124,7 +124,7 @@ align <- as.phyDat(align)
 We export the sequences and also a much smaller 
 
 
-```{r alignment}
+```{r export_alignment}
 short_align <- phangorn:::remove_similar(align, k=30)
 short_align
 write.phyDat(short_align, "data/short_align.fas", format="FASTA")
