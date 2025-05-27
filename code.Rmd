@@ -89,7 +89,18 @@ species <- c("Bordetella bronchiseptica", species)
 gene  <- sapply(strsplit(tmp, " ") , \(x) x[-1])
 gene <- sapply(gene, paste0, collapse=" ")
 gene <- gsub("\\[.*" , "", gene) |> trimws()
-gene[1] <- "Arylmalonate decarboxylase"
+gene[1] <- "arylmalonate decarboxylase"
+
+
+unique(gene)
+gene <- tolower(gene)
+ind <- grep("arylmalonate decarboxylase", gene)
+gene[ind] <- "arylmalonate decarboxylase"
+ind <- grep("maleate cis-trans isomerase", gene)
+gene[ind] <- "maleate cis-trans isomerase"
+ind <- grep("aspartate/glutamate racemase family protein", gene)
+gene[ind] <- "aspartate/glutamate racemase family protein"
+unique(gene)
 ```
 Finally we write out our sequences with accession number as ID and create a table with the accession number, the gene name and the species name. And we save this data so that we can use later on or with other softerware: 
 ```{r export_fasta_csv}
@@ -101,4 +112,31 @@ names(aa) <- accession
 write.FASTA(aa, "data_raw/all_sequences.fas")
 ```
 
+# Alignment (in R)
 
+If you were able to install the msa package we can align the sequences in R.
+```{r alignment}
+library(msa)
+mySeqs <- "data_raw/all_sequences.fas"
+align <- msa(mySeqs, method="Muscle", type="protein")
+align <- as.phyDat(align)
+```
+We export the sequences and also a much smaller 
+
+
+```{r alignment}
+short_align <- phangorn:::remove_similar(align, k=30)
+short_align
+write.phyDat(short_align, "data/short_align.fas", format="FASTA")
+write.phyDat(align, "data/align_muscle_3_8.fas", format="FASTA")
+```
+
+# Handling Alignments
+
+```{tr}
+library(phangorn)
+align <- read.phyDat("data/short_align.fas", format="FASTA", type="AA")
+align
+image(align)
+image(align, scheme="Clustal")
+```
